@@ -7,7 +7,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const sequelize = require('./config/db.js');
-const generateModels = require('./config/generateModels.js');
 
 app.use(bodyParser.json({limit: '200mb'}));
 app.use(bodyParser.urlencoded({limit: '200mb', extended: true }));
@@ -22,14 +21,7 @@ app.use('/admin', require('./routes/admin.route'));
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-app.get('/ganrateModel', (req, res) => {
-  try {
-    generateModels();
-    res.status(201).json({ status: true, code: 200, message: 'Models have been generated successfully', result:null });
-  } catch (error) {
-    res.status(400).json({ status: false, code: 404, message: error.message, result:null });
-  }
-});
+
 
 app.listen(process.env.PORT, () => {
   console.log(``);

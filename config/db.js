@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
-const dotenv = require('dotenv');
-const generateModels = require('./generateModels'); // Import the function to generate models
+const dotenv = require('dotenv'); // Import the function to generate models
 dotenv.config();
 
 // Database credentials
@@ -10,6 +9,7 @@ const password = process.env.LIVE_DB_PASSWORD;
 const port = process.env.LIVE_DB_PORT;
 const host = process.env.LIVE_DB_HOST;
 const dialect = 'postgres';
+const CA_CER = process.env.CA_CER;
 
 
 // Create a new Sequelize instance for connection
@@ -18,10 +18,11 @@ const sequelize = new Sequelize(database, username, password, {
   dialect: dialect,
   port: port,
   logging: false, // Disable logging for production, set to true for debugging
+  directory: '../models', 
   dialectOptions: {
     ssl: {
-      require: true,
-      rejectUnauthorized: false, // Adjust based on your server configuration
+      rejectUnauthorized: false,
+      ca: CA_CER
     },
   },
   define: {
