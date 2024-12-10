@@ -13,6 +13,8 @@ const testApi = async (req, res) => {
 const adminLogin = async (req, res) => {
   const { username, password } = req.body;
   try {
+    console.log('**********req.body*********',req.body);
+    
     if (!username || username === '') {
       return res.status(400).json({ status: false, code: 400, message: 'Username cannot be blank', result: null });
     }
