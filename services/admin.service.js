@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const sequelize = require('../config/db');
 const bcrypt = require('bcryptjs');
 
@@ -13,17 +14,15 @@ const testApi = async (req, res) => {
 const adminLogin = async (req, res) => {
   const { username, password } = req.body;
   try {
-    console.log('**********req.body*********',req.body);
-    
     if (!username || username === '') {
-      return res.status(400).json({ status: false, code: 400, message: 'Username cannot be blank', result: null });
+      return res.status(200).json({ status: false, code: 400, message: 'Username cannot be blank', result: null });
     }
     if (!password || password === '') {
-      return res.status(400).json({ status: false, code: 400, message: 'Password cannot be blank', result: null });
+      return res.status(200).json({ status: false, code: 400, message: 'Password cannot be blank', result: null });
     }
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
     if (!passwordRegex.test(password)) {
-      return res.status(400).json({ status: false, code: 400, message: 'Password must be at least 6 characters long, include at least one uppercase letter, one number, and one special character', result: null });
+      return res.status(200).json({ status: false, code: 400, message: 'Password must be at least 6 characters long, include at least one uppercase letter, one number, and one special character', result: null });
     }
 
     const results = await sequelize.query('SELECT * FROM adm_user WHERE login_name = :login_name OR email_id = :login_name', {
@@ -32,12 +31,12 @@ const adminLogin = async (req, res) => {
     });
 
     if (!results || results.length === 0) {
-      return res.status(404).json({ status: false, code: 404, message: 'User not found', result: null });
+      return res.status(200).json({ status: false, code: 404, message: 'User not found', result: null });
     }
     const isPasswordCorrect = bcrypt.compareSync(password, results[0].login_pass);
 
     if (!isPasswordCorrect) {
-      return res.status(401).json({ status: false, code: 401, message: 'Invalid credentials', result: null });
+      return res.status(200).json({ status: false, code: 401, message: 'Invalid credentials', result: null });
     }
 
     res.status(200).json({ status: true, code: 200, message: 'Login successful', result: results[0] });

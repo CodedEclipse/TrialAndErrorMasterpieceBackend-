@@ -1,11 +1,11 @@
 const express = require('express');
 const adminRoutes = express.Router();
 const AdminController = require('../controllers/admin.controller');
-const { decryptRequest, encryptResponse } = require('../middlewares/EncryptDecrypt');
+const { decryptRequest, encryptResponse,  decryptRequestData,encryptResponseData } = require('../middlewares/EncryptDecrypt');
 
 
-adminRoutes.use(decryptRequest);
-adminRoutes.use(encryptResponse);
+adminRoutes.use(decryptRequestData);
+adminRoutes.use(encryptResponseData);
 
 adminRoutes.get('/test', AdminController.testApi);
 adminRoutes.post('/adminLogin', AdminController.adminLogin);

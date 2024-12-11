@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const algorithm = 'aes-256-cbc';
 const secretKey = 'b3a3f72ad8a00b91edb28bfcf81f88ac9c46609bbab60d347139db62c5c2673b';
-
+const sec_key = 123
 const key = crypto.createHash('sha256').update(secretKey).digest();
 
 function encrypt(text) {
@@ -58,4 +58,51 @@ const encryptResponse = (req, res, next) => {
   next();
 };
 
-module.exports = { decryptRequest, encryptResponse, encrypt, decrypt };
+const EncryptData = (data) => {
+  // If data is an object (JSON), convert it to a string first
+  if (typeof data === 'object') {
+    data = JSON.stringify(data);
+  }
+  let encrypted = '';
+  // XOR encryption with secretKey
+  for (let i = 0; i < data.length; i++) {
+    encrypted += String.fromCharCode(data.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
+  }
+  // Base64 encode the encrypted string and return
+  return btoa(encrypted);
+};
+
+const DecryptData = (encryptedData) => {
+  encryptedData = atob(encryptedData);
+  let decryptedData = '';
+  for (let i = 0; i < encryptedData.length; i++) {
+    decryptedData += String.fromCharCode(encryptedData.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
+  }
+  return JSON.parse(decryptedData);
+};
+
+const decryptRequestData = (req, res, next) => {
+  if (req.body && req.body.encrypted) {
+    try {
+      req.body = DecryptData(req.body.encrypted);
+      next();
+    } catch (err) {
+      res.status(400).send({ error: 'Invalid encrypted data' });
+    }
+  } else {
+    next();
+  }
+};
+
+const encryptResponseData = (req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (data) {
+    const encryptedData = EncryptData(data);
+    res.set('Content-Type', 'application/json');
+    originalSend.call(res, JSON.stringify({ encrypted: encryptedData }));
+  };
+  next();
+};
+
+
+module.exports = { decryptRequest, encryptResponse, encrypt, decrypt, EncryptData, DecryptData, decryptRequestData,encryptResponseData };
