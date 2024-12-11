@@ -1,7 +1,7 @@
 const express = require('express');
 const adminRoutes = express.Router();
 const AdminController = require('../controllers/admin.controller');
-const { decryptRequest, encryptResponse,  decryptRequestData,encryptResponseData } = require('../middlewares/EncryptDecrypt');
+const { decryptRequestData,encryptResponseData } = require('../middlewares/EncryptDecrypt');
 
 
 adminRoutes.use(decryptRequestData);
