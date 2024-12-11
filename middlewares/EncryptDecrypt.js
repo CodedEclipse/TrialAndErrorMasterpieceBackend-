@@ -92,7 +92,11 @@ const decryptRequestData = (req, res, next) => {
       res.status(400).send({ error: 'Invalid encrypted data' });
     }
   } else {
-    next();
+    if(req.body || req.body=={}){
+      next();
+    }else{
+      res.status(400).send({ status: false, code: 400, message: 'Bad Request!.', result: null });
+    }
   }
 };
 

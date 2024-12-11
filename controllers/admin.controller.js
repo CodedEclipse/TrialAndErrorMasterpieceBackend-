@@ -22,6 +22,15 @@ const AdminController = {
       res.status(400).json({ error: error.message });
     }
   },
+  logout: async (req, res) => {
+    console.log('vnidnvdcnn');
+    
+    try {
+      await adminService.logout(req, res);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = AdminController;
