@@ -69,17 +69,8 @@ const adminLogin = async (req, res) => {
 const getHashPassword = async (req, res) => {
   const { password } = req.body;
   try {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
     if (!password || password === '') {
       return res.status(400).json({ status: false, code: 400, message: 'Password cannot be blank', result: null });
-    }
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({
-        status: false,
-        code: 400,
-        message: 'Password must be at least 6 characters long, include at least one uppercase letter, one number, and one special character',
-        result: null
-      });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
