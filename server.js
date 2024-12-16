@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 sequelize.authenticate();
 
 app.use('/admin', require('./routes/admin.route'));
+app.use('/cust', require('./routes/customer.route.js'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
