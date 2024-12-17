@@ -1,11 +1,11 @@
 const express = require('express');
-const adminRoutes = express.Router();
+const custRoutes = express.Router();
 const { decryptRequestData,encryptResponseData } = require('../middlewares/EncryptDecrypt');
 const CustomerController = require('../controllers/customer.controller');
 
-adminRoutes.use(decryptRequestData);
-adminRoutes.use(encryptResponseData);
+custRoutes.use(decryptRequestData);
+custRoutes.use(encryptResponseData);
 
-adminRoutes.post('/CustomerRegistration', CustomerController.CustomerRegistration);
+custRoutes.post('/CustomerRegistration', CustomerController.CustomerRegistration);
 
-module.exports = adminRoutes;
+module.exports = custRoutes;

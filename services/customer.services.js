@@ -93,7 +93,40 @@ const CustomerRegistration = async (req, res) => {
     }
 };
 
+const CustomerList = async (req, res) => {
+    const { list_type } = req.body;
+    const list_type_array = ['active', 'pending', 'all'];
+    try {
+        if (!list_type || !list_type_array.includes(list_type)) {
+            return res.status(200).json({status: false,code: 400,message: 'Invalid or missing list type',result: null});
+        }
+        let typeQry = '';
+        if (list_type === 'active') {
+            typeQry = ' AND is_activated = true';
+        } else if (list_type === 'pending') {
+            typeQry = ' AND is_activated = false';
+        }
+
+        const checkUserQuery = ` SELECT * FROM cst_customer WHERE is_deleted = false ${typeQry} `;
+
+        const existingUser = await sequelize.query(checkUserQuery, {
+            type: sequelize.QueryTypes.SELECT,
+        });
+        if (existingUser.length === 0) {
+            return res.status(200).json({status: false,code: 404,message: 'No users found for the given list type',result: null});
+        }
+
+        return res.status(200).json({status: true,code: 200,message: 'User list fetched successfully',result: existingUser});
+
+    } catch (error) {
+        console.error('Error fetching customer list:', error.message);
+        return res.status(500).json({status: false,code: 500,message: 'Internal server error',result: null});
+    }
+};
+
+
 
 module.exports = {
-    CustomerRegistration
+    CustomerRegistration,
+    CustomerList
 }

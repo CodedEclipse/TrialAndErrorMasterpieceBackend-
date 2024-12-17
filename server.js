@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 // });
 app.post('/encrypt', (req, res) => {
   let responce = EncryptData(req.body)
-  res.send(responce);
+  res.send({"encrypted":responce});
 });
 app.post('/decrypt', (req, res) => {
   let responce = DecryptData(req.body.encrypted)
