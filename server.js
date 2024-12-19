@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 sequelize.authenticate();
 
 app.use('/admin', require('./routes/admin.route'));
+app.use('/cust', require('./routes/customer.route.js'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -34,7 +35,7 @@ app.get('/', (req, res) => {
 // });
 app.post('/encrypt', (req, res) => {
   let responce = EncryptData(req.body)
-  res.send(responce);
+  res.send({"encrypted":responce});
 });
 app.post('/decrypt', (req, res) => {
   let responce = DecryptData(req.body.encrypted)

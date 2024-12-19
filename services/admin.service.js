@@ -23,10 +23,6 @@ const adminLogin = async (req, res) => {
     if (!password || password === '') {
       return res.status(200).json({ status: false, code: 400, message: 'Password cannot be blank', result: null });
     }
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(200).json({ status: false, code: 400, message: 'Password must be at least 6 characters long, include at least one uppercase letter, one number, and one special character', result: null });
-    }
 
     const results = await sequelize.query('SELECT * FROM adm_user WHERE login_name = :login_name OR email_id = :login_name', {
       replacements: { login_name: username },
