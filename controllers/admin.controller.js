@@ -8,6 +8,13 @@ const AdminController = {
       res.status(400).json({ error: error.message });
     }
   },
+  get_states: async (req, res) => {
+    try {
+      await adminService.get_states(req, res);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
   adminLogin: async (req, res) => {
     try {
       await adminService.adminLogin(req, res);

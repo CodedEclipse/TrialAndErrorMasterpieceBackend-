@@ -60,7 +60,9 @@ const adminLogin = async (req, res) => {
 
     res.status(200).json({ status: true, code: 200, message: 'Login successful', result: user });
   } catch (error) {
-    console.error('Error during login:', error);
+    console.log(error);
+    
+    // console.error('Error during login:', error);
     res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
   }
 };
@@ -110,10 +112,24 @@ const logout = async (req, res) => {
     res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
   }
 };
+const get_states = async (req, res) => {
+  try {
+    const response = await sequelize.query(`Select state_name as key,state_lgd_code as cat from state_lgd_data;`, {
+      type: sequelize.QueryTypes.SELECT,
+    });
+    
+    res.status(200).json({ status: true, code: 201, message: 'States List', result: response });
+
+  } catch (error) {
+    console.error('Some Error Occured', error.message);
+    res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
+  }
+};
 
 module.exports = {
   testApi,
   adminLogin,
   getHashPassword,
-  logout
+  logout,
+  get_states
 }
