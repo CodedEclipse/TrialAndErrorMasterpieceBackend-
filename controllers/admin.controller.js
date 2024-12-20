@@ -15,6 +15,13 @@ const AdminController = {
       res.status(400).json({ error: error.message });
     }
   },
+  year_list: async (req, res) => {
+    try {
+      await adminService.year_list(req, res);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
   adminLogin: async (req, res) => {
     try {
       await adminService.adminLogin(req, res);
@@ -25,6 +32,13 @@ const AdminController = {
   getHashPassword: async (req, res) => {
     try {
       await adminService.getHashPassword(req, res);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+  make_visible: async (req, res) => {
+    try {
+      await adminService.make_visible(req, res);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

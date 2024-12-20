@@ -110,7 +110,7 @@ const logout = async (req, res) => {
 };
 const get_states = async (req, res) => {
   try {
-    const response = await sequelize.query(`Select state_name as key,state_lgd_code as cat from state_lgd_data;`, {
+    const response = await sequelize.query(`Select state_name as key,state_lgd_code::string as cat from state_lgd_data;`, {
       type: sequelize.QueryTypes.SELECT,
     });
     
@@ -121,11 +121,49 @@ const get_states = async (req, res) => {
     res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
   }
 };
+const year_list = async (req, res, next) => {
+  try {  
+      const today = new Date();
+      const currentYear = today.getFullYear();
+      const currentMonth = today.getMonth();
 
+
+
+      const adjustedYear = (currentMonth < 6) ? currentYear - 1 : currentYear;
+
+
+      const yearsArray = [];
+      for (let i = 0; i < 5; i++) {
+          const startYear = adjustedYear - i;
+          const endYear = startYear + 1;
+          const list = {
+              cat: `${startYear}-${endYear}`,
+              key: `${startYear}-${endYear}`,
+              is_default: i === 0
+          }
+          yearsArray.push(list);
+      }
+      return res.status(200).json({ status: true, code: 200, message: 'Year List', result: yearsArray });
+  } catch (err) {
+      return res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
+  }
+};
+const make_visible = async (req, res, next) => {
+  const {states,table_name,year,season,true_by,date}=req.body;
+  try {  
+      console.log("---------=========----",states)
+
+      return res.status(200).json({ status: true, code: 200, message: 'Selections Are Now Visible', result: null });
+  } catch (err) {
+      return res.status(500).json({ status: false, code: 500, message: 'Internal server error', result: null });
+  }
+};
 module.exports = {
   testApi,
   adminLogin,
   getHashPassword,
   logout,
-  get_states
+  get_states,
+  year_list,
+  make_visible
 }
