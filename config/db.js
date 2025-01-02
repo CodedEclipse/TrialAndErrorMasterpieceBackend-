@@ -17,7 +17,7 @@ const sequelize = new Sequelize(database, username, password, {
   host: host,
   dialect: dialect,
   port: port,
-  logging: false, // Disable logging for production, set to true for debugging
+  logging: false,
   directory: '../models', 
   dialectOptions: {
     ssl: {

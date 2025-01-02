@@ -81,8 +81,10 @@ const DecryptData = (encryptedData) => {
   return JSON.parse(decryptedData);
 };
 
-const decryptRequestData = (req, res, next) => {
+const decryptRequestData = (req, res, next) => {  
   if (req.body && req.body.encrypted) {
+  console.log('4788441');
+
     try {
       req.body = DecryptData(req.body.encrypted);
       next();
@@ -90,9 +92,15 @@ const decryptRequestData = (req, res, next) => {
       res.status(400).send({ error: 'Invalid encrypted data' });
     }
   } else {
-    if(req.body || req.body=={}){
+  console.log('qwstfrhyuij');
+  console.log('req.body ',req.body , typeof req.body  );
+  console.log('req.method ',req.method , typeof req.method  );
+
+    if((req.method=='POST' && typeof req.body=='object') || req.method=='GET'){
+      console.log('qwstfrhyuij/////');
       next();
     }else{
+      console.log('qwstfrhyuij787455');
       res.status(400).send({ status: false, code: 400, message: 'Bad Request!.', result: null });
     }
   }

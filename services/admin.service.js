@@ -3,15 +3,125 @@ const sequelize = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const { result } = require('lodash');
 
+function getSeason(dateString) {
+  console.log('dateString',dateString , 'Type:', typeof dateString);
+  
+  const today = new Date(dateString); // Convert the string to a Date object
+  
+  // Extract month and day from today
+  let month1 = today.getMonth(); // Month is 0-indexed (0 = January, 11 = December)
+  const day = today.getDate();
+  
+  
+  const month = Number(month1)+1
+  // Define the start and end months and days for each season
+  // Rabi: Dec 20 to Apr 3
+  const rabiStart = { month: 11, day: 20 }; // December 20
+  const rabiEnd = { month: 3, day: 3 }; // April 3
+  
+  // Zaid: Apr 4 to Jul 20
+  const zaidStart = { month: 3, day: 4 }; // April 4
+  const zaidEnd = { month: 6, day: 20 }; // July 20
+  
+  // Kharif: Jul 21 to Dec 19
+  const kharifStart = { month: 6, day: 21 }; // July 21
+  const kharifEnd = { month: 11, day: 19 }; // December 19
+  console.log('month', month, 'Type:', typeof month);
+  console.log('day', day, 'Type:', typeof day);
+  
+  console.log('rabiStart', rabiStart.month, 'Type:', typeof rabiStart.month);
+  console.log('rabiEnd', rabiEnd.month, 'Type:', typeof rabiEnd.month);
+  console.log('zaidStart', zaidStart.day, 'Type:', typeof zaidStart.day);
+  console.log('zaidEnd', zaidEnd.day, 'Type:', typeof zaidEnd.day);
+  console.log('kharifStart', kharifStart, 'Type:', typeof kharifStart);
+  console.log('kharifEnd', kharifEnd, 'Type:', typeof kharifEnd);
 
+  // Determine the current season by comparing the month and day
+  if (
+    (month == rabiStart.month && day >= rabiStart.day) || 
+    (month == rabiEnd.month && day <= rabiEnd.day) ||
+    (month > rabiStart.month && month < rabiEnd.month)
+  ) {
+    return 'Rabi';
+  } else if (
+    (month == zaidStart.month && day >= zaidStart.day) ||
+    (month == zaidEnd.month && day <= zaidEnd.day) ||
+    (month > zaidStart.month && month < zaidEnd.month)
+  ) {
+    return 'Zaid';
+  } else if (
+    (month == kharifStart.month && day >= kharifStart.day) ||
+    (month == kharifEnd.month && day <= kharifEnd.day) ||
+    (month > kharifStart.month && month < kharifEnd.month)
+  ) {
+    return 'Kharif';
+  } else {
+    return 'No season';
+  }
+}
+const getAllDaysOfYear = (year) => {
+  const startDate = moment(`${year}-01-01`);
+  const endDate = moment(`${year}-12-31`);
+  const days = [];
+
+  // Loop from start date to end date
+  let currentDate = startDate;
+  while (currentDate <= endDate) {
+    days.push(currentDate.format('YYYY-MM-DD'));
+    currentDate.add(1, 'days');
+  }
+
+  return days;
+};
+// API handler to handle the request and get season based on date
 const testApi = async (req, res) => {
   try {
-    res.status(201).json({ status: true, code: 200, message: 'Get Api run successfully', result: null });
+    const dateString = req.query.date; // Use query parameter `date`
+    if (!dateString) {
+      return res.status(400).json({
+        status: false,
+        code: 400,
+        message: 'Date parameter is required.',
+        result: null
+      });
+    }
+
+    const days2024 = getAllDaysOfYear(2024);
+    let seasonDayArray2024 = [];
+    for (let day of days2024) {
+      let season_day = await getSeason(day);
+      seasonDayArray2024.push({ season_day, day });
+      break; 
+    }
+
+    // const days2025 = getAllDaysOfYear(2025);
+    // let seasonDayArray2025 = [];
+    // for (let day of days2025) {
+    //   let season_day = await getSeason(day);
+    //   seasonDayArray2025.push({ season_day, day });
+    // }
+
+    const season = 'getSeason(dateString)';
+    
+    res.status(200).json({
+      status: true,
+      code: 200,
+      message: 'API executed successfully',
+      result: { season, seasonDayArray2024 }
+    });
   } catch (error) {
-    res.status(400).json({ status: false, code: 404, message: error.message, result: null });
+    console.log(error);
+    res.status(400).json({
+      status: false,
+      code: 404,
+      message: error.message,
+      result: null
+    });
   }
 };
+
 
 const adminLogin = async (req, res) => {
   const { username, password } = req.body;
